@@ -37,6 +37,12 @@ int init(char *name){
 
 
     cwd.append(".got/");
+    cmd = "mkdir " + cwd + "branches";
+    retcode = system(cmd.c_str());
+    cmd = "mkdir " + cwd + "hashes";
+    retcode = system(cmd.c_str());
+    cmd = "touch " + cwd + "log";
+    retcode = system(cmd.c_str());
 
     printf("Initialized.\n");
     return 0;
