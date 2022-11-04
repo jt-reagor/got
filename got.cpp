@@ -5,6 +5,7 @@ using namespace std;
 
 int init(char *name);
 int init();
+int diff(string file1,string file2);
 
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
@@ -18,6 +19,15 @@ int main(int argc, char *argv[]){
             }else{
                 int retcode = init();
                 printf("retcode of init = %d\n", retcode);
+            }
+        }
+        else if (strcmp(argv[i],"diff")==0){
+            if(argc - i <= 2){
+                printf("Too few arguments\n");
+                break;
+            }
+            else{
+                diff(argv[2],argv[3]);
             }
         }
 
@@ -77,4 +87,14 @@ int init(){
 
     printf("Initialized.\n");
     return 0;
+}
+
+//gets the diff of two files and puts it to patch file
+//TODO: add error handling
+//TODO: add option to specify patch file
+//TODO: outfile needs to be named the hash of the commit
+int diff(string file1,string file2){
+    string cmd = "diff --color=auto " + file1 + " " + file2 + " >> testing.patch";
+    int retcode = system(cmd.c_str());
+    return retcode;
 }
