@@ -1,10 +1,15 @@
 #include<stdio.h>
 #include<iostream>
+#include<fstream>
 #include<cstring>
+#include<sys/stat.h>
+#include<chrono>
+
 using namespace std;
 
 int init(char *name);
 int init();
+int init_aux(string cwd);
 int diff(string file1,string file2);
 
 int main(int argc, char *argv[]){
@@ -39,51 +44,44 @@ int main(int argc, char *argv[]){
 // initializes .got folder in new directory
 // TODO: clean up this code and add error handling using the retcodes.
 int init(char *name){
-    int retcode;
-    string nameString = string(name);
-
     printf("Initializing...\n");
-    string cmd = "mkdir " + nameString;
-    retcode = system(cmd.c_str());
+    // make new directory of name specified by arg
+    int retcode = mkdir(name, 0777);
     if(retcode != 0) return retcode;
+    string nameString = string(name);
     string cwd = "./" + nameString + "/";
 
-    cmd = "mkdir " + cwd + ".got";
-    retcode = system(cmd.c_str());
-    if(retcode != 0) return retcode;
-
-
-    cwd.append(".got/");
-    cmd = "mkdir " + cwd + "branches";
-    retcode = system(cmd.c_str());
-    cmd = "mkdir " + cwd + "hashes";
-    retcode = system(cmd.c_str());
-    cmd = "touch " + cwd + "log";
-    retcode = system(cmd.c_str());
-
-    printf("Initialized.\n");
-    return 0;
+    // pass to aux func that constructs .got dir
+    return init_aux(cwd);
 }
 
 // initializes .got folder in current directory
 int init(){
-    int retcode;
-
     printf("Initializing...\n");
     string cwd = "./";
 
-    string cmd = "mkdir " + cwd + ".got";
-    retcode = system(cmd.c_str());
+    //pass to aux func that constructs .got dir
+    return init_aux(cwd);
+}
+
+int init_aux(string cwd){
+    // make .got dir
+    int retcode = mkdir((cwd+".got").c_str(), 0777);
     if(retcode != 0) return retcode;
 
-
+    // make branches and hashes dirs in .got
     cwd.append(".got/");
-    cmd = "mkdir " + cwd + "branches";
-    retcode = system(cmd.c_str());
-    cmd = "mkdir " + cwd + "hashes";
-    retcode = system(cmd.c_str());
-    cmd = "touch " + cwd + "log";
-    retcode = system(cmd.c_str());
+    retcode = mkdir((cwd+"branches").c_str(), 0777);
+    if(retcode != 0) return retcode;
+    retcode = mkdir((cwd+"hashes").c_str(), 0777);
+    if(retcode != 0) return retcode;
+    
+    // make log file in .got
+    ofstream logFile((cwd+"log").c_str());
+    logFile << "Log" << "\n--------------------------------------\n";
+    // auto time = chrono::system_clock::now();
+    // logFile << "Initialized " << ctime(&time);
+    logFile.close();
 
     printf("Initialized.\n");
     return 0;
