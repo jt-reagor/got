@@ -10,11 +10,9 @@ int init(char *name);
 int init();
 int init_aux(string cwd);
 int diff(string file1,string file2);
+int patch(string fileToPatch, string PatchFile);
+string hasher(string name, string time);
 
-
-int main(int argc, char *argv[]){
-    for(int i=1; i<argc; i++){
-        // printf("%d: %s\n", i, argv[i]);
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
         // printf("%d: %s\n", i, argv[i]);
