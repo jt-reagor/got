@@ -5,9 +5,7 @@
 #include<sys/stat.h>
 #include<chrono>
 
-#include<bits/stdc++.h>
 
-#include<ofstream>
 
 
 using namespace std;
@@ -23,7 +21,6 @@ string hasher(string name, string time);
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
         // printf("%d: %s\n", i, argv[i]);
-
         //init
         if(strcmp(argv[i], "init") == 0){
             if(argc - i > 1){
@@ -117,10 +114,10 @@ string hasher(string name, string time){
         hashVal = ((hashVal << 5) + hashVal) + c;
     }
     return to_string(hashVal);
-
+}
 int log(string hash1,string hash2, string time, string user){
-    string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user
+    string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user;
     ofstream myFile;
     myFile.open("/got/test/.got/log");
-    myFile << commitLog
+    myFile << commitLog;
 }
