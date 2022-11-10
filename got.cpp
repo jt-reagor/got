@@ -4,6 +4,7 @@
 #include<cstring>
 #include<sys/stat.h>
 #include<chrono>
+#include<ofstream>
 
 using namespace std;
 
@@ -97,7 +98,7 @@ int diff(string file1,string file2){
     return retcode;
 }
 
-int log(string hash1, hash2, string time, string user){
+int log(string hash1,string hash2, string time, string user){
     string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user
     ofstream myFile;
     myFile.open("/got/test/.got/log");
