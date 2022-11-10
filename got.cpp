@@ -96,3 +96,11 @@ int diff(string file1,string file2){
     int retcode = system(cmd.c_str());
     return retcode;
 }
+
+
+//applies an inputted patch file to a file
+int patch(string patchFile, string file){
+    string cmd = "patch " + patchFile + " -i " + file;
+    int retcode = system(cmd.c_str());
+    return retcode; 
+}
