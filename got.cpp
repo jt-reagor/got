@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
                 printf("retcode of init = %d\n", retcode);
             }
         }
+        //diff
         else if (strcmp(argv[i],"diff")==0){
             if(argc - i <= 2){
                 printf("Too few arguments\n");
@@ -33,6 +34,16 @@ int main(int argc, char *argv[]){
             }
             else{
                 diff(argv[2],argv[3]);
+            }
+        }
+        //patch
+        else if (strcmp(argv[i],"patch")==0){
+            if(argc - i <= 2){
+                printf("Too few arguments\n");
+                break;
+            }
+            else{
+                patch(argv[2],argv[3]);
             }
         }
 
