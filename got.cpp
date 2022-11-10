@@ -4,7 +4,6 @@
 #include<cstring>
 #include<sys/stat.h>
 #include<chrono>
-
 using namespace std;
 
 int init(char *name);
@@ -12,10 +11,13 @@ int init();
 int init_aux(string cwd);
 int diff(string file1,string file2);
 
+
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
         // printf("%d: %s\n", i, argv[i]);
-
+int main(int argc, char *argv[]){
+    for(int i=1; i<argc; i++){
+        // printf("%d: %s\n", i, argv[i]);
         //init
         if(strcmp(argv[i], "init") == 0){
             if(argc - i > 1){
@@ -46,7 +48,6 @@ int main(int argc, char *argv[]){
                 patch(argv[2],argv[3]);
             }
         }
-
         //put rest of commands here in if statements like "init" above.
     }
     return 0;
@@ -109,6 +110,7 @@ int diff(string file1,string file2){
 }
 
 
+
 //applies an inputted patch file to a file
 //this will update the first input with the patch file in the second input
 //TODO: add scalability to work with directories 
@@ -117,3 +119,22 @@ int patch(string fileToPatch, string PatchFile){
     int retcode = system(cmd.c_str());
     return retcode; 
 }
+//hashes the 2 strings and returns the hash
+//TODO: add error handling
+string hasher(string name, string time){
+    string hash = name + time;
+    unsigned long hashVal = 5381;
+    int c;
+    for(int i=0; i<hash.length(); i++){
+        c = hash[i];
+        hashVal = ((hashVal << 5) + hashVal) + c;
+    }
+    return to_string(hashVal);
+}
+int log(string hash1,string hash2, string time, string user){
+    string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user;
+    ofstream myFile;
+    myFile.open("/got/test/.got/log");
+    myFile << commitLog;
+}
+
