@@ -134,5 +134,6 @@ int log(string hash1,string hash2, string time, string user){
     ofstream myFile;
     myFile.open("/got/test/.got/log");
     myFile << commitLog;
+    return 0;
 }
 
