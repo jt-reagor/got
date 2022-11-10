@@ -110,8 +110,10 @@ int diff(string file1,string file2){
 
 
 //applies an inputted patch file to a file
-int patch(string patchFile, string file){
-    string cmd = "patch " + patchFile + " -i " + file;
+//this will update the first input with the patch file in the second input
+//TODO: add scalability to work with directories 
+int patch(string fileToPatch, string PatchFile){
+    string cmd = "patch " + fileToPatch + " -i " + PatchFile;
     int retcode = system(cmd.c_str());
     return retcode; 
 }
