@@ -4,7 +4,11 @@
 #include<cstring>
 #include<sys/stat.h>
 #include<chrono>
+
+#include<bits/stdc++.h>
+
 #include<ofstream>
+
 
 using namespace std;
 
@@ -12,6 +16,9 @@ int init(char *name);
 int init();
 int init_aux(string cwd);
 int diff(string file1,string file2);
+
+string hasher(string name, string time);
+
 
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
@@ -97,6 +104,19 @@ int diff(string file1,string file2){
     int retcode = system(cmd.c_str());
     return retcode;
 }
+
+
+//hashes the 2 strings and returns the hash
+//TODO: add error handling
+string hasher(string name, string time){
+    string hash = name + time;
+    unsigned long hashVal = 5381;
+    int c;
+    for(int i=0; i<hash.length(); i++){
+        c = hash[i];
+        hashVal = ((hashVal << 5) + hashVal) + c;
+    }
+    return to_string(hashVal);
 
 int log(string hash1,string hash2, string time, string user){
     string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user
