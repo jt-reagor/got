@@ -12,6 +12,7 @@ int init_aux(string cwd);
 int diff(string file1,string file2);
 int patch(string fileToPatch, string PatchFile);
 string hasher(string name, string time);
+int commit();
 
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
@@ -45,6 +46,10 @@ int main(int argc, char *argv[]){
             else{
                 patch(argv[2],argv[3]);
             }
+        }
+        else if (strcmp(argv[i], "commit")==0){
+            int retcode = commit();
+            printf("retcode of commit = %d/n", retcode);
         }
         //put rest of commands here in if statements like "init" above.
     }
@@ -94,6 +99,29 @@ int init_aux(string cwd){
     logFile.close();
 
     printf("Initialized.\n");
+    return 0;
+}
+
+// steps of a commit:
+// 1. diff between current workspace and copy of last commit stored in .got folder
+// 2. create unique id (hash) based on time and person committing TODO: make hash more robust
+// 3. update log with previous hash, new hash, time, and user
+// 4. update branch head to reflect current commit hash
+// 5. copy contents of workspace into .got folder
+int commit(){
+    // step 1
+    int retcode = diff("TARGET", "./got/copy/TARGET");
+
+    // step 2
+    // TODO: input time and user name
+    int retcode = hasher();
+
+    // step 3
+
+    // step 4
+
+    // step 5
+    
     return 0;
 }
 
