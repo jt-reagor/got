@@ -90,6 +90,8 @@ int init_aux(string cwd){
     if(retcode != 0) return retcode;
     retcode = mkdir((cwd+"hashes").c_str(), 0777);
     if(retcode != 0) return retcode;
+    retcode = mkdir((cwd+"copy").c_str(), 0777);
+    if(retcode != 0) return retcode;
     
     // make log file in .got
     ofstream logFile((cwd+"log").c_str());
@@ -114,14 +116,14 @@ int commit(){
 
     // step 2
     // TODO: input time and user name
-    int retcode = hasher();
+    retcode = hasher();
 
     // step 3
 
     // step 4
 
     // step 5
-    
+
     return 0;
 }
 
