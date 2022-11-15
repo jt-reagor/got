@@ -91,6 +91,8 @@ int init_aux(string cwd){
     if(retcode != 0) return retcode;
     retcode = mkdir((cwd+"hashes").c_str(), 0777);
     if(retcode != 0) return retcode;
+    retcode = mkdir((cwd+"copy").c_str(), 0777);
+    if(retcode != 0) return retcode;
     
     // make log file in .got
     ofstream logFile((cwd+"log").c_str());
@@ -98,6 +100,15 @@ int init_aux(string cwd){
     // auto time = chrono::system_clock::now();
     // logFile << "Initialized " << ctime(&time);
     logFile.close();
+    ofstream guserFile((cwd+"guser").c_str());
+    cout << "Enter your email: ";
+    string email = '';
+    cin >> email;
+    cout << "Enter your username: ";
+    string user = '';
+    cin >> user;
+    guserFile << email << endl << user;
+    guserFile.close();
 
     printf("Initialized.\n");
     return 0;
@@ -114,6 +125,7 @@ int commit(){
     int retcode = diff("TARGET", "./got/copy/TARGET");
 
     // step 2
+    
     time_t now = time(0);
     // dt Formatted as Tue Nov 15 14:30:10 2022
     char* dt = ctime(&now);
@@ -132,7 +144,7 @@ int commit(){
     // step 4
 
     // step 5
-    
+
     return 0;
 }
 
