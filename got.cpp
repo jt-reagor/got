@@ -100,6 +100,8 @@ int init_aux(string cwd){
     // auto time = chrono::system_clock::now();
     // logFile << "Initialized " << ctime(&time);
     logFile.close();
+
+    // make guser file
     ofstream guserFile((cwd+"guser").c_str());
     cout << "Enter your email: ";
     string email = '';
@@ -109,6 +111,11 @@ int init_aux(string cwd){
     cin >> user;
     guserFile << email << endl << user;
     guserFile.close();
+
+    // make master branch file
+    ofstream mbranchFile((cwd+"branches/master").c_str());
+    mbranchFile << "0";
+    mbranchFile.close();
 
     printf("Initialized.\n");
     return 0;
@@ -139,9 +146,13 @@ int commit(){
     getline(myFile, user);
 
     string commit_hash = hasher(user,dt);
+
     // step 3
+    // get previous commit hash from .got/branches/master file
+    // user commit_hash for new hash
 
     // step 4
+    // change .got/branches/master file to contain hash of new commit
 
     // step 5
 
