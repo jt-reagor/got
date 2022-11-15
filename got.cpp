@@ -4,6 +4,7 @@
 #include<cstring>
 #include<sys/stat.h>
 #include<chrono>
+#include<ctime>
 using namespace std;
 
 int init(char *name);
@@ -124,9 +125,20 @@ int commit(){
     int retcode = diff("TARGET", "./got/copy/TARGET");
 
     // step 2
-    // TODO: input time and user name
-    retcode = hasher();
+    
+    time_t now = time(0);
+    // dt Formatted as Tue Nov 15 14:30:10 2022
+    char* dt = ctime(&now);
 
+    // reads in the email and user from guser
+    ifstream myFile;
+    myFile.open(".got/guser");
+    string email;
+    getline(myFile, email);
+    string user;
+    getline(myFile, user);
+
+    string commit_hash = hasher(user,dt);
     // step 3
 
     // step 4
