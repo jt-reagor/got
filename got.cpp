@@ -122,7 +122,7 @@ int init_aux(string cwd){
 // 5. copy contents of workspace into .got folder
 int commit(){
     // step 1
-    int retcode = diff("TARGET", "./got/copy/TARGET");
+    int retcode = diff("TARGET", ".got/copy/TARGET");
 
     // step 2
     
@@ -183,7 +183,7 @@ string hasher(string name, string time){
 int log(string hash1,string hash2, string time, string user){
     string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user;
     ofstream myFile;
-    myFile.open("/got/test/.got/log");
+    myFile.open(".got/log");
     myFile << commitLog;
     return 0;
 }
