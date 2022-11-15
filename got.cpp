@@ -99,6 +99,15 @@ int init_aux(string cwd){
     // auto time = chrono::system_clock::now();
     // logFile << "Initialized " << ctime(&time);
     logFile.close();
+    ofstream guserFile((cwd+"guser").c_str());
+    cout << "Enter your email: ";
+    string email = '';
+    cin >> email;
+    cout << "Enter your username: ";
+    string user = '';
+    cin >> user;
+    guserFile << email << endl << user;
+    guserFile.close();
 
     printf("Initialized.\n");
     return 0;
