@@ -104,10 +104,10 @@ int init_aux(string cwd){
     // make guser file
     ofstream guserFile((cwd+"guser").c_str());
     cout << "Enter your email: ";
-    string email = '';
+    string email = "";
     cin >> email;
     cout << "Enter your username: ";
-    string user = '';
+    string user = "";
     cin >> user;
     guserFile << email << endl << user;
     guserFile.close();
