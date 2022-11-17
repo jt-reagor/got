@@ -181,7 +181,7 @@ int diff(string file1,string file2, string newfname){
 //this will update the first input with the patch file in the second input
 //TODO: add scalability to work with directories 
 int patch(string fileToPatch, string PatchFile){
-    string cmd = "patch " + fileToPatch + " -i " + PatchFile;
+    string cmd = "patch -r " + fileToPatch + " -i " + PatchFile;
     int retcode = system(cmd.c_str());
     return retcode; 
 }
