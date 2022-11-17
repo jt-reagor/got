@@ -97,8 +97,8 @@ int init_aux(string cwd){
     // make log file in .got
     ofstream logFile((cwd+"log").c_str());
     logFile << "Log" << "\n--------------------------------------\n";
-    // auto time = chrono::system_clock::now();
-    // logFile << "Initialized " << ctime(&time);
+    time_t now = time(0);
+    logFile << "Initialized " << ctime(&now);
     logFile.close();
 
     // make guser file

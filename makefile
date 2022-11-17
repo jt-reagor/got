@@ -12,6 +12,7 @@ run:
 clean:
 	rm $(EXEC)
 	rm -rf $(TESTDIR)
+	rm -rf .got
 
 init: $(EXEC)
 	./$(EXEC) init $(TESTDIR)
