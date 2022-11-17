@@ -10,7 +10,7 @@ using namespace std;
 int init(char *name);
 int init();
 int init_aux(string cwd);
-int diff(string file1,string file2);
+int diff(string file1,string file2, string newfname);
 int patch(string fileToPatch, string PatchFile);
 string hasher(string name, string time);
 int commit();
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
                 break;
             }
             else{
-                diff(argv[2],argv[3]);
+                diff(argv[2],argv[3], "test");
             }
         }
         //patch
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
         }
         else if (strcmp(argv[i], "commit")==0){
             int retcode = commit();
-            printf("retcode of commit = %d/n", retcode);
+            printf("retcode of commit = %d\n", retcode);
         }
         //put rest of commands here in if statements like "init" above.
     }
@@ -95,11 +95,15 @@ int init_aux(string cwd){
     retcode = mkdir((cwd+"copy").c_str(), 0777);
     if(retcode != 0) return retcode;
     
+    // make a blank TARGET file in copy
+    ofstream targetFile((cwd+"/copy/TARGET").c_str());
+    targetFile.close();
+
     // make log file in .got
     ofstream logFile((cwd+"log").c_str());
     logFile << "Log" << "\n--------------------------------------\n";
-    // auto time = chrono::system_clock::now();
-    // logFile << "Initialized " << ctime(&time);
+    time_t now = time(0);
+    logFile << "Initialized " << ctime(&now);
     logFile.close();
 
     // make guser file
@@ -123,17 +127,13 @@ int init_aux(string cwd){
 }
 
 // steps of a commit:
-// 1. diff between current workspace and copy of last commit stored in .got folder
-// 2. create unique id (hash) based on time and person committing TODO: make hash more robust
+// 1. create unique id (hash) based on time and person committing TODO: make hash more robust
+// 2. diff between current workspace and copy of last commit stored in .got folder
 // 3. update log with previous hash, new hash, time, and user
 // 4. update branch head to reflect current commit hash
 // 5. copy contents of workspace into .got folder
 int commit(){
     // step 1
-    int retcode = diff("TARGET", ".got/copy/TARGET");
-
-    // step 2
-    
     time_t now = time(0);
     // dt Formatted as Tue Nov 15 14:30:10 2022
     string dt = ctime(&now);
@@ -146,6 +146,8 @@ int commit(){
     string user;
     getline(guser, user);
     string commit_hash = hasher(user,dt);
+    // step 2
+    int retcode = diff("TARGET", ".got/copy/TARGET", commit_hash);
     // step 3
     // get previous commit hash from .got/branches/master file
     // user commit_hash for new hash
@@ -167,8 +169,8 @@ int commit(){
 //TODO: add error handling
 //TODO: add option to specify patch file
 //TODO: outfile needs to be named the hash of the commit
-int diff(string file1,string file2){
-    string cmd = "diff --color=auto " + file1 + " " + file2 + " >> testing.patch";
+int diff(string file1,string file2, string newfname){
+    string cmd = "diff --color=auto " + file1 + " " + file2 + " >> .got/hashes/" + newfname;
     int retcode = system(cmd.c_str());
     return retcode;
 }
