@@ -14,6 +14,7 @@ int diff(string file1,string file2);
 int patch(string fileToPatch, string PatchFile);
 string hasher(string name, string time);
 int commit();
+int log(string hash1,string hash2, string time, string user);
 
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
@@ -138,18 +139,23 @@ int commit(){
     char* dt = ctime(&now);
 
     // reads in the email and user from guser
-    ifstream myFile;
-    myFile.open(".got/guser");
+    ifstream oldHashFile;
+    oldHashFile.open(".got/guser");
     string email;
-    getline(myFile, email);
+    getline(oldHashFile, email);
     string user;
-    getline(myFile, user);
+    getline(oldHashFile, user);
 
     string commit_hash = hasher(user,dt);
 
     // step 3
     // get previous commit hash from .got/branches/master file
     // user commit_hash for new hash
+    ifstream myFile;
+    myFile.open(".got/branches/master");
+    string prev_hash;
+    getline(myFile, prev_hash);
+    log(prev_hash, commit_hash, dt, user);
 
     // step 4
     // change .got/branches/master file to contain hash of new commit
@@ -192,10 +198,11 @@ string hasher(string name, string time){
     return to_string(hashVal);
 }
 int log(string hash1,string hash2, string time, string user){
-    string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user;
+    string commitLog = '\n' + hash1 + " -> " + hash2 + "     " + time + "     " + user;
     ofstream myFile;
-    myFile.open(".got/log");
+    myFile.open(".got/log", ios::app);
     myFile << commitLog;
+    myFile.close();
     return 0;
 }
 
