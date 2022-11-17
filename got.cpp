@@ -136,18 +136,16 @@ int commit(){
     
     time_t now = time(0);
     // dt Formatted as Tue Nov 15 14:30:10 2022
-    char* dt = ctime(&now);
-
+    string dt = ctime(&now);
+    dt.pop_back();
     // reads in the email and user from guser
-    ifstream oldHashFile;
-    oldHashFile.open(".got/guser");
+    ifstream guser;
+    guser.open(".got/guser");
     string email;
-    getline(oldHashFile, email);
+    getline(guser, email);
     string user;
-    getline(oldHashFile, user);
-
+    getline(guser, user);
     string commit_hash = hasher(user,dt);
-
     // step 3
     // get previous commit hash from .got/branches/master file
     // user commit_hash for new hash
@@ -198,7 +196,7 @@ string hasher(string name, string time){
     return to_string(hashVal);
 }
 int log(string hash1,string hash2, string time, string user){
-    string commitLog = '\n' + hash1 + " -> " + hash2 + "     " + time + "     " + user;
+    string commitLog = hash1 + " -> " + hash2 + " " + time + " " + user+ "\n";
     ofstream myFile;
     myFile.open(".got/log", ios::app);
     myFile << commitLog;
