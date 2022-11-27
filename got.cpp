@@ -146,8 +146,10 @@ int commit(){
     string user;
     getline(guser, user);
     string commit_hash = hasher(user,dt);
+
     // step 2
     int retcode = diff("TARGET", ".got/copy/TARGET", commit_hash);
+
     // step 3
     // get previous commit hash from .got/branches/master file
     // user commit_hash for new hash
@@ -156,11 +158,25 @@ int commit(){
     string prev_hash;
     getline(myFile, prev_hash);
     log(prev_hash, commit_hash, dt, user);
+    myFile.close();
 
     // step 4
     // change .got/branches/master file to contain hash of new commit
+    ofstream masterBranchFile;
+    masterBranchFile.open(".got/branches/master");
+    masterBranchFile << commit_hash;
+    masterBranchFile.close();
 
     // step 5
+    // once patch is completed, apply last patch instead of full copy
+    ifstream target("./TARGET");
+    ofstream copy("./.got/copy/TARGET");
+    string line;
+    while(getline(target, line)){
+        copy << line << "\n";
+    }
+    target.close();
+    copy.close();
 
     return 0;
 }
