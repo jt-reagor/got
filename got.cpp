@@ -4,14 +4,17 @@
 #include<cstring>
 #include<sys/stat.h>
 #include<chrono>
+#include<ctime>
 using namespace std;
 
 int init(char *name);
 int init();
 int init_aux(string cwd);
-int diff(string file1,string file2);
+int diff(string file1,string file2, string newfname);
 int patch(string fileToPatch, string PatchFile);
 string hasher(string name, string time);
+int commit();
+int log(string hash1,string hash2, string time, string user);
 
 int main(int argc, char *argv[]){
     for(int i=1; i<argc; i++){
@@ -33,7 +36,7 @@ int main(int argc, char *argv[]){
                 break;
             }
             else{
-                diff(argv[2],argv[3]);
+                diff(argv[2],argv[3], "test");
             }
         }
         //patch
@@ -45,6 +48,10 @@ int main(int argc, char *argv[]){
             else{
                 patch(argv[2],argv[3]);
             }
+        }
+        else if (strcmp(argv[i], "commit")==0){
+            int retcode = commit();
+            printf("retcode of commit = %d\n", retcode);
         }
         //put rest of commands here in if statements like "init" above.
     }
@@ -85,15 +92,92 @@ int init_aux(string cwd){
     if(retcode != 0) return retcode;
     retcode = mkdir((cwd+"hashes").c_str(), 0777);
     if(retcode != 0) return retcode;
+    retcode = mkdir((cwd+"copy").c_str(), 0777);
+    if(retcode != 0) return retcode;
     
+    // make a blank TARGET file in copy
+    ofstream targetFile((cwd+"/copy/TARGET").c_str());
+    targetFile.close();
+
     // make log file in .got
     ofstream logFile((cwd+"log").c_str());
     logFile << "Log" << "\n--------------------------------------\n";
-    // auto time = chrono::system_clock::now();
-    // logFile << "Initialized " << ctime(&time);
+    time_t now = time(0);
+    logFile << "Initialized " << ctime(&now);
     logFile.close();
 
+    // make guser file
+    ofstream guserFile((cwd+"guser").c_str());
+    cout << "Enter your email: ";
+    string email = "";
+    cin >> email;
+    cout << "Enter your username: ";
+    string user = "";
+    cin >> user;
+    guserFile << email << endl << user;
+    guserFile.close();
+
+    // make master branch file
+    ofstream mbranchFile((cwd+"branches/master").c_str());
+    mbranchFile << "0";
+    mbranchFile.close();
+
     printf("Initialized.\n");
+    return 0;
+}
+
+// steps of a commit:
+// 1. create unique id (hash) based on time and person committing TODO: make hash more robust
+// 2. diff between current workspace and copy of last commit stored in .got folder
+// 3. update log with previous hash, new hash, time, and user
+// 4. update branch head to reflect current commit hash
+// 5. copy contents of workspace into .got folder
+int commit(){
+    // step 1
+    time_t now = time(0);
+    // dt Formatted as Tue Nov 15 14:30:10 2022
+    string dt = ctime(&now);
+    dt.pop_back();
+    // reads in the email and user from guser
+    ifstream guser;
+    guser.open(".got/guser");
+    string email;
+    getline(guser, email);
+    string user;
+    getline(guser, user);
+    string commit_hash = hasher(user,dt);
+
+    // step 2
+    int retcode = diff("TARGET", ".got/copy/TARGET", commit_hash);
+
+    // step 3
+    // get previous commit hash from .got/branches/master file
+    // user commit_hash for new hash
+    ifstream myFile;
+    myFile.open(".got/branches/master");
+    string prev_hash;
+    getline(myFile, prev_hash);
+    log(prev_hash, commit_hash, dt, user);
+    myFile.close();
+
+    // step 4
+    // change .got/branches/master file to contain hash of new commit
+    ofstream masterBranchFile;
+    masterBranchFile.open(".got/branches/master");
+    masterBranchFile << commit_hash;
+    masterBranchFile.close();
+
+    // step 5
+    // once patch is completed, apply last patch instead of full copy
+    ifstream target("./TARGET");
+    ofstream copy("./.got/copy/TARGET");
+    string line;
+    while(getline(target, line)){
+        copy << line << "\n";
+    }
+    target.close();
+    copy.close();
+
     return 0;
 }
 
@@ -101,8 +185,8 @@ int init_aux(string cwd){
 //TODO: add error handling
 //TODO: add option to specify patch file
 //TODO: outfile needs to be named the hash of the commit
-int diff(string file1,string file2){
-    string cmd = "diff --color=auto " + file1 + " " + file2 + " >> testing.patch";
+int diff(string file1,string file2, string newfname){
+    string cmd = "diff --color=auto " + file1 + " " + file2 + " >> .got/hashes/" + newfname;
     int retcode = system(cmd.c_str());
     return retcode;
 }
@@ -113,7 +197,7 @@ int diff(string file1,string file2){
 //this will update the first input with the patch file in the second input
 //TODO: add scalability to work with directories 
 int patch(string fileToPatch, string PatchFile){
-    string cmd = "patch " + fileToPatch + " -i " + PatchFile;
+    string cmd = "patch -r " + fileToPatch + " -i " + PatchFile;
     int retcode = system(cmd.c_str());
     return retcode; 
 }
@@ -130,10 +214,11 @@ string hasher(string name, string time){
     return to_string(hashVal);
 }
 int log(string hash1,string hash2, string time, string user){
-    string commitLog = hash1 + " -> " + hash2 + "     " + time + "     " + user;
+    string commitLog = hash1 + " -> " + hash2 + " " + time + " " + user+ "\n";
     ofstream myFile;
-    myFile.open("/got/test/.got/log");
+    myFile.open(".got/log", ios::app);
     myFile << commitLog;
+    myFile.close();
     return 0;
 }
 
