@@ -1,0 +1,4 @@
+Got is a clone of Git.
+My team and I dug into the .git file system to reverse engineer Git.
+Then, we went about replicating it!
+This repo is the work-in-progress result.
